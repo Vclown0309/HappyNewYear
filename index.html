@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 马年大吉</title>
+    <style>
+        /* 全局重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --chinese-red: #c41e3a;
+            --bright-gold: #ffd700;
+            --light-gold: rgba(255, 215, 0, 0.15);
+            --very-light-gold: rgba(255, 215, 0, 0.08);
+        }
+
+        body {
+            font-family: "Kaiti", "STKaiti", "楷体", "Songti SC", "Noto Serif SC", serif;
+            background-color: var(--chinese-red);
+            color: var(--bright-gold);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ---------------- 第一屏：封面启动页 ---------------- */
+        #splash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--chinese-red);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            overflow: hidden;
+        }
+
+        /* 背景：马年元素 + 祥云暗纹 */
+        #splash-screen::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='%23ffd700' fill-opacity='0.08' d='M50 150 Q60 120 80 110 Q100 100 110 80 Q120 60 130 50 L140 60 Q130 70 125 85 Q120 100 105 110 Q90 120 80 140 Q75 150 70 160 L60 155 Q65 150 50 150 Z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='%23ffd700' fill-opacity='0.08' transform='scale(-1,1) translate(-200,0)' d='M50 150 Q60 120 80 110 Q100 100 110 80 Q120 60 130 50 L140 60 Q130 70 125 85 Q120 100 105 110 Q90 120 80 140 Q75 150 70 160 L60 155 Q65 150 50 150 Z'/%3E%3C/svg%3E"),
+                radial-gradient(circle at 20% 20%, var(--light-gold) 0%, transparent 55%),
+                radial-gradient(circle at 80% 80%, var(--light-gold) 0%, transparent 55%);
+            background-size: 250px 250px, 250px 250px, 130% 130%;
+            background-position: 10% 80%, 90% 20%, 0% 0%;
+            background-repeat: no-repeat, no-repeat, repeat;
+            opacity: 1;
+            animation: cloudMove 80s linear infinite;
+            z-index: 0;
+        }
+
+        /* 背景金粉粒子 */
+        .gold-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 1.5px;
+            height: 1.5px;
+            background: var(--bright-gold);
+            border-radius: 50%;
+            opacity: 0.25;
+            animation: particleFloat 20s linear infinite;
+        }
+
+        /* 福字菱形斗方容器 - 核心调整：增加下边距 */
+        .fu-doufang {
+            position: relative;
+            z-index: 10;
+            width: 240px;
+            height: 240px;
+            transform: rotate(45deg);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 75px; /* 增加间距，防止福字放大时碰到下方 */
+            background: rgba(255, 255, 255, 0.02);
+            animation: breatheRotate 5s ease-in-out infinite;
+        }
+
+        /* 书法福字 */
+        .splash-fu {
+            font-size: 11rem;
+            font-weight: 500;
+            line-height: 1;
+            user-select: none;
+            transform: rotate(135deg);
+            background: linear-gradient(135deg, #fffde7 0%, #ffd700 45%, #ffc107 70%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)) drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
+
+        /* 马年主题 */
+        .horse-year-wrapper {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 迷你菱形背景 */
+        .horse-year-diamond {
+            position: absolute;
+            width: 140px;
+            height: 45px;
+            transform: rotate(0deg);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            background: var(--very-light-gold);
+            border-radius: 2px;
+        }
+
+        /* 左右装饰短竖线 */
+        .horse-year-line {
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 215, 0, 0.5);
+            margin: 0 15px;
+        }
+
+        .horse-year-title {
+            font-family: "Kaiti", "STKaiti", "楷体", "Songti SC", serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.35em;
+            opacity: 0.95;
+            z-index: 11;
+            font-weight: 500;
+            color: var(--bright-gold);
+            position: relative;
+        }
+
+        /* 年份小字 */
+        .splash-date {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 1.25rem;
+            letter-spacing: 0.6em;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            z-index: 10;
+            font-weight: 300;
+        }
+
+        /* 春联小字 */
+        .spring-couplet {
+            font-size: 1.4rem;
+            letter-spacing: 0.4em;
+            opacity: 0.85;
+            margin-bottom: 60px;
+            z-index: 10;
+            line-height: 1.6;
+        }
+
+        /* 开启按钮 */
+        .open-btn {
+            background: transparent;
+            border: 2px solid var(--bright-gold);
+            color: var(--bright-gold);
+            font-family: "Kaiti", "STKaiti", "楷体", serif;
+            font-size: 1.6rem;
+            padding: 16px 50px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3em;
+            z-index: 10;
+        }
+
+        .open-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+        }
+
+        .open-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ---------------- 第二屏：主内容页 ---------------- */
+        #main-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .header-text {
+            font-family: "PingFang SC", sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.6em;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .video-frame {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .footer-blessing {
+            margin-top: 35px;
+            font-size: 3rem;
+            font-weight: 500;
+            letter-spacing: 0.3em;
+            color: var(--bright-gold);
+        }
+
+        .sub-text {
+            margin-top: 12px;
+            font-size: 1rem;
+            color: rgba(255,255,255,0.75);
+            font-family: "PingFang SC", sans-serif;
+            letter-spacing: 0.15em;
+        }
+
+        /* ---------------- 动画 - 核心调整：缩小呼吸幅度 ---------------- */
+        @keyframes breatheRotate {
+            0%, 100% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(45deg) scale(1.01); } /* 从1.015降到1.01，减少放大幅度 */
+        }
+
+        @keyframes cloudMove {
+            0% { background-position: 10% 80%, 90% 20%, 0% 0%; }
+            50% { background-position: 10% 80%, 90% 20%, 100% 100%; }
+            100% { background-position: 10% 80%, 90% 20%, 0% 0%; }
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.25; }
+            90% { opacity: 0.25; }
+            100% { transform: translateY(-10vh) translateX(15px); opacity: 0; }
+        }
+
+        /* ---------------- 响应式适配 - 同步调整 ---------------- */
+        @media (max-width: 600px) {
+            .fu-doufang {
+                width: 180px;
+                height: 180px;
+                margin-bottom: 60px; /* 移动端也增加间距 */
+            }
+            .splash-fu { 
+                font-size: 8rem; 
+            }
+            .horse-year-diamond {
+                width: 120px;
+                height: 40px;
+            }
+            .horse-year-line {
+                height: 16px;
+                margin: 0 12px;
+            }
+            .horse-year-title {
+                font-size: 1.05rem;
+                letter-spacing: 0.3em;
+            }
+            .splash-date { 
+                font-size: 1rem; 
+                letter-spacing: 0.5em;
+                margin-bottom: 20px;
+            }
+            .spring-couplet { 
+                font-size: 1.1rem; 
+                letter-spacing: 0.3em;
+                margin-bottom: 50px;
+            }
+            .open-btn { 
+                font-size: 1.3rem; 
+                padding: 14px 40px;
+            }
+            .footer-blessing { font-size: 2rem; }
+            .header-text { font-size: 0.8rem; letter-spacing: 0.4em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="gold-particles" id="particlesContainer"></div>
+
+        <div class="fu-doufang">
+            <div class="splash-fu">福</div>
+        </div>
+
+        <div class="horse-year-wrapper">
+            <div class="horse-year-line"></div>
+            <div class="horse-year-diamond"></div>
+            <div class="horse-year-title">丙午马年</div>
+            <div class="horse-year-line"></div>
+        </div>
+
+        <div class="splash-date">2026</div>
+        <div class="spring-couplet">岁岁常欢愉 年年皆胜意</div>
+        <button class="open-btn" id="openBtn">马到功成</button>
+    </div>
+
+    <div id="main-screen">
+        <div class="container">
+            <div class="header-text">乙巳辞旧岁 丙午迎新春</div>
+            
+            <div class="video-frame">
+                <!-- 替换此处为你的祝福视频链接 -->
+                <video id="blessingVideo" loop playsinline webkit-playsinline preload="auto">
+                    <source src="祝福.mp4" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+            </div>
+
+            <div class="footer-blessing">马到成功</div>
+            <div class="sub-text">愿新年 胜旧年 常安 常乐</div>
+        </div>
+    </div>
+
+    <script>
+        const splashScreen = document.getElementById('splash-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const openBtn = document.getElementById('openBtn');
+        const video = document.getElementById('blessingVideo');
+        const particlesContainer = document.getElementById('particlesContainer');
+
+        // 生成金粉粒子
+        function initParticles() {
+            const particleCount = window.innerWidth < 600 ? 20 : 35;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = 15 + Math.random() * 10 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 核心交互逻辑
+        openBtn.addEventListener('click', () => {
+            video.muted = false;
+            video.play().catch(err => console.log("播放异常", err));
+            splashScreen.style.transform = 'translateY(-100%)';
+            setTimeout(() => mainScreen.style.opacity = '1', 300);
+        });
+
+        video.load();
+        initParticles();
+    </script>
+</body>
+</html>
